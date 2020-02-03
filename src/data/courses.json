@@ -14,7 +14,7 @@
   {
     "dept": "CIS",
     "number": 121,
-    "title": "Programming Languages and Techniques I",
+    "title": "Programming Languages and Techniques II",
     "prereqs": ["CIS 120", "CIS 160"],
     "description": "This is a course about Algorithms and Data Structures using the JAVA programming language. We introduce the basic concepts about complexity of an algorithm and methods on how to compute the running time of algorithms. Then, we describe data structures like stacks, queues, maps, trees, and graphs, and we construct efficient algorithms based on these representations. The course builds upon existing implementations of basic data structures in JAVA and extends them for the structures like trees, studying the performance of operations on such structures, and their efficiency when used in real-world applications. A large project introducing students to the challenges of software engineering concludes the course."
   },
