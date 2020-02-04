@@ -3,8 +3,6 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Collapse from 'react-bootstrap/Collapse';
 import Modal from 'react-bootstrap/Modal';
 import ListGroup from 'react-bootstrap/ListGroup';
 
@@ -36,13 +34,12 @@ class App extends Component {
     this.searchChange = this.searchChange.bind(this);
   }
 
-// Update the expanded course in the middle
+  // Update the expanded course in the middle
   updateSelected(selectedCourse) {
-    this.setState({selected: selectedCourse.props.info
-    });
+    this.setState({selected: selectedCourse.props.info});
   }
 
-// Toggle whether the cart is shown or hidden
+  // Toggle whether the cart is shown or hidden
   cartToggle() {
     if (this.state.cartVisible) {
       this.setState({cartVisible: false});
@@ -51,7 +48,7 @@ class App extends Component {
     }
   }
 
-// Show or hide the checkout popup (course receipt)
+  // Show or hide the checkout popup (course receipt)
   checkout() {
     var current = this.state.checkout;
     if (current) {
@@ -61,9 +58,9 @@ class App extends Component {
     }
   }
 
-// Add a course to the cart
-  addToCart(courseToAdd) {
-    if (this.state.coursesInCart.length == 7) {
+  // Add a course to the cart
+  addToCart(courseToAdd, event) {
+    if (this.state.coursesInCart.length === 7) {
       this.setState({alert: "danger"});
       return;
     }
@@ -75,37 +72,60 @@ class App extends Component {
     this.setState({coursesInCart: oldCourses,
                    courseTitlesInCart: oldTitles});
 
-    if (this.state.coursesInCart.length == 7) {
+    if (this.state.coursesInCart.length === 7) {
       this.setState({alert: "warning"});
     }
+
+    // Don't want to show expanded information when add button clicked
+    event.stopPropagation();
   }
 
-// Remove a course from the cart
-  removeFromCart(courseToRemove) {
-    if (this.state.coursesInCart.length == 7) {
+  // Remove a course from the cart
+  removeFromCart(courseToRemove, event) {
+    if (this.state.coursesInCart.length === 7) {
       this.setState({alert: "none"});
     }
 
     var oldCourses = this.state.coursesInCart;
     var oldTitles = this.state.courseTitlesInCart;
     var index = oldTitles.indexOf(courseToRemove.props.info.title);
-    if (index != -1) {
+    if (index !== -1) {
       oldCourses.splice(index, 1);
       oldTitles.splice(index, 1);
       this.setState({coursesInCart: oldCourses,
                      courseTitlesInCart: oldTitles});
     }
+
+    // Don't want to show expanded information when remove button clicked
+    event.stopPropagation();
   }
 
-// Respond to a change in the search term
+  // Respond to a change in the search term
   searchChange(event) {
     this.setState({searchTerm: event.target.value});
   }
 
   render() {
+
+    // Displays courses in cart with full information
+    // Warns the user if their cart is empty
+    var popupMessage;
+    if (this.state.coursesInCart.length === 0) {
+      popupMessage = <p>Your cart is empty!</p>;
+    } else {
+      popupMessage = <ListGroup>
+          {this.state.coursesInCart.map(course => (
+            <ListGroup.Item action>
+            <ExpandedCourse info={course}
+                            isCheckout={true} />
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+    }
+
     return (
       <>
-        
+        {/* Navigation bar */}
         <Nav cartVisible={this.state.cartVisible}
              onCartToggle={this.cartToggle}
              alert={this.state.alert}
@@ -113,47 +133,40 @@ class App extends Component {
              searchTerm={this.state.searchTerm}
              onSearchChange={this.searchChange}/>
 
-          <Row className="mainRow">
+        <Row className="mainRow">
 
-            {/* Scrollable list of courses */}
-            <Courses searchTerm={this.state.searchTerm}
-                     coursesInCart={this.state.coursesInCart}
-                     courseTitlesInCart={this.state.courseTitlesInCart}
-                     selected={this.state.selected}
-                     onSelected={this.updateSelected}
-                     onAddToCart={this.addToCart}
-                     onRemoveFromCart={this.removeFromCart} />
+          {/* Scrollable list of courses filtered by search term */}
+          <Courses searchTerm={this.state.searchTerm}
+                   coursesInCart={this.state.coursesInCart}
+                   courseTitlesInCart={this.state.courseTitlesInCart}
+                   selected={this.state.selected}
+                   onSelected={this.updateSelected}
+                   onAddToCart={this.addToCart}
+                   onRemoveFromCart={this.removeFromCart} />
 
-            {/* Full course description that appears when you click on a course */}
-            <ExpandedCourse id="desc" info={this.state.selected} />
+          {/* Full description of selected course */}
+          <ExpandedCourse id="desc" info={this.state.selected} />
 
-            {/* Course Cart */}
-            <Cart coursesInCart={this.state.coursesInCart}
-                  courseTitlesInCart={this.state.courseTitlesInCart}
-                  cartVisible={this.state.cartVisible}
-                  onSelected={this.updateSelected}
-                  onAddToCart={this.addToCart}
-                  onRemoveFromCart={this.removeFromCart} />
+          {/* Course Cart */}
+          <Cart coursesInCart={this.state.coursesInCart}
+                courseTitlesInCart={this.state.courseTitlesInCart}
+                cartVisible={this.state.cartVisible}
+                onSelected={this.updateSelected}
+                onAddToCart={this.addToCart}
+                onRemoveFromCart={this.removeFromCart} />
 
-          </Row>
+        </Row>
 
-          <Modal show={this.state.checkout} onHide={this.checkout}>
-            <Modal.Header closeButton>
-              <Modal.Title>Course Receipt</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
+        {/* Course receipt popup */}
+        <Modal show={this.state.checkout} onHide={this.checkout}>
+          <Modal.Header closeButton>
+            <Modal.Title>Course Receipt</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {popupMessage}
+          </Modal.Body>
+        </Modal>
 
-              <ListGroup>
-                {this.state.coursesInCart.map(course => (
-                  <ListGroup.Item action>
-                  <ExpandedCourse info={course}
-                                  isCheckout={true} />
-                  </ListGroup.Item>
-                ))}
-            </ListGroup>
-
-            </Modal.Body>
-          </Modal>
       </>
     );
   }
