@@ -1,9 +1,11 @@
-.btn-success {
-  cursor: default;
+body {
+  width: 100vw;
 }
 
 .mainRow {
   padding: 20px;
+  padding-left: 47px;
+  width: 100vw;
 }
 
 .mainCol {

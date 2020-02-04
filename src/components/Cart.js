@@ -36,12 +36,13 @@ class Cart extends Component {
             <h3>Course Cart</h3>
             <div className="scrollable">
               <ListGroup>
-                {this.props.coursesInCart.map(course => (
+                {this.props.coursesInCart.map((course, index, arr) => (
                   <ListGroup.Item action>
                   <CourseThumbnail info={course}
-                    onSelected={this.props.onSelected}
-                    onAddToCart={this.props.onAddToCart}
-                    onRemoveFromCart={this.props.onRemoveFromCart}
+                    {...this.props}
+                    upDown={true}
+                    first={index === 0}
+                    last={index === (arr.length - 1)}
                     inCart={(this.props.courseTitlesInCart)
                       .includes(course.title)}/>
                   </ListGroup.Item>

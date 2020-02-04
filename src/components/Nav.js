@@ -18,16 +18,16 @@ class Nav extends Component {
     // Display the appropriate cart message
     var alertMessage;
     if ("warning" === this.props.alert) {
-      alertMessage = <Button className="cartAlert" variant="warning" disabled>
+      alertMessage = <Button style={{"cursor": "default"}} variant="warning" disabled>
                        Your course cart is now full.
                      </Button>
     } else if ("danger" === this.props.alert) {
-      alertMessage = <Button className="cartAlert" variant="danger" disabled>
+      alertMessage = <Button style={{"cursor": "default"}} variant="danger" disabled>
                        Your course cart is full!
                        Please remove a course before adding another one.
                      </Button>
     } else {
-      alertMessage = <Button variant="success" disabled>
+      alertMessage = <Button style={{"cursor": "default"}} variant="success" disabled>
                        You may select up to 7 courses.
                      </Button>
 
@@ -50,7 +50,7 @@ class Nav extends Component {
 
         {/* Cart message */}
         <Navbar.Collapse className="justify-content-center">
-          <div className="cartAlert">{alertMessage}</div>
+          {alertMessage}
         </Navbar.Collapse>
 
         {/* Show/hide cart and Checkout buttons */}

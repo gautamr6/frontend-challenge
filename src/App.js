@@ -32,6 +32,8 @@ class App extends Component {
     this.removeFromCart = this.removeFromCart.bind(this);
     this.checkout = this.checkout.bind(this);
     this.searchChange = this.searchChange.bind(this);
+    this.handleUp = this.handleUp.bind(this);
+    this.handleDown = this.handleDown.bind(this);
   }
 
   // Update the expanded course in the middle
@@ -60,6 +62,9 @@ class App extends Component {
 
   // Add a course to the cart
   addToCart(courseToAdd, event) {
+    // Don't want to show expanded information when add button clicked
+    event.stopPropagation();
+
     if (this.state.coursesInCart.length === 7) {
       this.setState({alert: "danger"});
       return;
@@ -75,13 +80,13 @@ class App extends Component {
     if (this.state.coursesInCart.length === 7) {
       this.setState({alert: "warning"});
     }
-
-    // Don't want to show expanded information when add button clicked
-    event.stopPropagation();
   }
 
   // Remove a course from the cart
   removeFromCart(courseToRemove, event) {
+    // Don't want to show expanded information when remove button clicked
+    event.stopPropagation();
+    
     if (this.state.coursesInCart.length === 7) {
       this.setState({alert: "none"});
     }
@@ -95,14 +100,49 @@ class App extends Component {
       this.setState({coursesInCart: oldCourses,
                      courseTitlesInCart: oldTitles});
     }
-
-    // Don't want to show expanded information when remove button clicked
-    event.stopPropagation();
   }
 
   // Respond to a change in the search term
   searchChange(event) {
     this.setState({searchTerm: event.target.value});
+  }
+
+  // Move a course up in the cart
+  handleUp(course, event) {
+    var oldCourses = this.state.coursesInCart;
+    var oldTitles = this.state.courseTitlesInCart;
+    var index = oldTitles.indexOf(course.props.info.title);
+    if (index !== 0) {
+      var tempCourse = oldCourses[index - 1];
+      var tempTitle = oldTitles[index - 1];
+      oldCourses[index - 1] = oldCourses[index];
+      oldTitles[index - 1] = oldTitles[index];
+      oldCourses[index] = tempCourse;
+      oldTitles[index] = tempTitle;
+      this.setState({coursesInCart: oldCourses,
+                     courseTitlesInCart: oldTitles});
+    }
+
+    event.stopPropagation();
+  }
+
+  // Move a course down in the cart
+  handleDown(course, event) {
+    var oldCourses = this.state.coursesInCart;
+    var oldTitles = this.state.courseTitlesInCart;
+    var index = oldTitles.indexOf(course.props.info.title);
+    if (index !== oldTitles.length - 1) {
+      var tempCourse = oldCourses[index + 1];
+      var tempTitle = oldTitles[index + 1];
+      oldCourses[index + 1] = oldCourses[index];
+      oldTitles[index + 1] = oldTitles[index];
+      oldCourses[index] = tempCourse;
+      oldTitles[index] = tempTitle;
+      this.setState({coursesInCart: oldCourses,
+                     courseTitlesInCart: oldTitles});
+    }
+
+    event.stopPropagation();
   }
 
   render() {
@@ -153,7 +193,9 @@ class App extends Component {
                 cartVisible={this.state.cartVisible}
                 onSelected={this.updateSelected}
                 onAddToCart={this.addToCart}
-                onRemoveFromCart={this.removeFromCart} />
+                onRemoveFromCart={this.removeFromCart}
+                onUp={this.handleUp}
+                onDown={this.handleDown} />
 
         </Row>
 

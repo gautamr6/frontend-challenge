@@ -13,6 +13,8 @@ class CourseThumbnail extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleCartAdd = this.handleCartAdd.bind(this);
     this.handleCartRemove = this.handleCartRemove.bind(this);
+    this.handleUp = this.handleUp.bind(this);
+    this.handleDown = this.handleDown.bind(this);
   }
 
   // Detects when the user clicks on a course to expand it.
@@ -31,6 +33,18 @@ class CourseThumbnail extends Component {
     this.props.onRemoveFromCart(this, event);
   }
 
+  handleUp(event) {
+    if (this.props.onUp != null) {
+      this.props.onUp(this, event);
+    }
+  }
+
+  handleDown(event) {
+    if (this.props.onDown != null) {
+      this.props.onDown(this, event);
+    }
+  }
+
   render() {
     var name = this.props.info.dept + " " + this.props.info.number;
 
@@ -43,8 +57,29 @@ class CourseThumbnail extends Component {
       button = <Button className="cartButton" onClick={this.handleCartAdd}>Add</Button>
     }
 
+    var colWidth = null;
+    var rankingButtons = null;
+    if (this.props.upDown) {
+      colWidth = 3;
+
+      //Omit up button for first course in cart
+      var upStyle = this.props.first ? {"visibility": "hidden"} : null;
+      //Omit down button for last course in cart
+      var downStyle = this.props.last ? {"visibility": "hidden"} : null;
+
+      //Display up and down buttons
+      rankingButtons = <Col sm={1}>
+          <i style={upStyle} onClick={this.handleUp} class="fas fa-sort-up fa-lg"></i>
+          <i style={downStyle} onClick={this.handleDown} class="fas fa-sort-down fa-lg"></i>
+        </Col>
+    }
+
     return(
-        <Row onClick={this.handleClick}>
+        <Row className="align-items-center" onClick={this.handleClick}>
+
+          {/* Display up and down buttons (only for courses in cart) */}
+          {rankingButtons}
+
           {/* Shortened course information */}
           <Col sm={8}>
             <h4>{name}</h4>
@@ -52,7 +87,7 @@ class CourseThumbnail extends Component {
           </Col>
 
           {/* Add to/remove from cart button */}
-          <Col className="justify-content-end">
+          <Col sm={colWidth}>
             {button}
           </Col>
         </Row>

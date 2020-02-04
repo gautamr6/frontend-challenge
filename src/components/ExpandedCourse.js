@@ -46,7 +46,9 @@ class ExpandedCourse extends Component {
     } else {
       return(<Col className="mainCol">
                <h3>More Information</h3>
-               <Jumbotron>{inner}</Jumbotron>
+               <div className="scrollable">
+                 <Jumbotron>{inner}</Jumbotron>
+               </div>
              </Col>);
     }
 

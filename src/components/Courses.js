@@ -16,6 +16,8 @@ class Courses extends Component {
 // Displays the courses that match the search term
   decideIfInList(course) {
     var searchTerm = this.props.searchTerm.toUpperCase();
+    var courseName1 = (course.dept + " " + course.number).toUpperCase();
+    var courseName2 = (course.dept + "-" + course.number).toUpperCase();
 
     // Check if search term matches anything in course information
     if (searchTerm === "" ||
@@ -24,19 +26,19 @@ class Courses extends Component {
         (searchTerm.indexOf(course.number.toString().toUpperCase()) > -1
           && searchTerm.indexOf(course.dept.toUpperCase()) > -1) ||
         course.description.toUpperCase().indexOf(searchTerm) > -1 ||
-        course.title.toUpperCase().indexOf(searchTerm) > -1) {
+        course.title.toUpperCase().indexOf(searchTerm) > -1 ||
+        courseName1.indexOf(searchTerm) > -1 ||
+        courseName2.indexOf(searchTerm) > -1) {
 
       // Display course
       return(<ListGroup.Item action>
           <CourseThumbnail info={course}
-            onSelected={this.props.onSelected}
-            onAddToCart={this.props.onAddToCart}
-            onRemoveFromCart={this.props.onRemoveFromCart}
+            {...this.props}
             inCart={(this.props.courseTitlesInCart).includes(course.title)} />
         </ListGroup.Item>);
 
     } else {
-      // Omits course
+      // Omit course
       return(<> </>)
     }
   }
